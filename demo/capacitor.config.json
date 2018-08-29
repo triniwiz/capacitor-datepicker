@@ -1,0 +1,6 @@
+{
+  "appId": "co.fitcom.demo.datepicker",
+  "appName": "DatePickerDemo",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}
