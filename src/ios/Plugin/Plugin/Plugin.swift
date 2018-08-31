@@ -36,95 +36,183 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
     }
 
     func deviceDidRotateWithViewController(isPortrait: Bool, viewController: PickerViewController){
-        let alertSize = CGSize(width: UIScreen.main.bounds.size.width / 2, height: UIScreen.main.bounds.size.height / 2)
+        let alertSize = CGSize(width: 300 , height: 250 + defaultButtonHeight)
         viewController.preferredContentSize = CGSize(width: alertSize.width, height: alertSize.height)
-        //viewController.setCenteredPopover()
     }
 
+    @objc func cancel(sender: UIButton) {
+        self.alert?.dismiss(animated: true, completion: nil)
+        if(lastCall != nil){
+            var obj:[String:Any] = [:]
+            obj["value"] = nil
+            lastCall?.resolve(obj)
+            lastCall = nil
+        }
+    }
+
+    @objc func datePickerChanged(picker: UIDatePicker) {
+        if(title == nil){
+            titleView?.text = titleDateFormatter?.string(from: picker.date)
+        }
+    }
+
+    @objc func ok(sender: UIButton) {
+        self.alert?.dismiss(animated: true, completion: nil)
+        if(lastCall != nil){
+            var obj:[String:Any] = [:]
+            obj["value"] = dateFormatter?.string(from: (picker?.date)!)
+            lastCall?.resolve(obj)
+            lastCall = nil
+        }
+    }
+
+    private let defaultButtonHeight: CGFloat = 50
+    private let defaultTitleHeight:CGFloat = 50
+    private let defaultSpacerHeight:CGFloat = 1
+    private var defaultColor: UIColor?
+    private var alert: PickerViewController?
+    private var lastCall: CAPPluginCall?
+    private var picker: UIDatePicker?
+    private var title:String?
+    var titleDateFormatter:DateFormatter?
+    var dateFormatter: DateFormatter?
+    var titleView: UILabel?
+
+    public override func load() {
+        titleDateFormatter = DateFormatter()
+        dateFormatter = DateFormatter()
+        defaultColor = UIColor(red:0.16, green:0.38, blue:1.00, alpha:1.0)
+    }
 
     @objc func show(_ call: CAPPluginCall) {
         let mode = call.getString("mode") ?? "date"
         let date = call.getString("date")
         let min = call.getString("min")
         let max = call.getString("max")
-        let title = call.getString("title")
+        title = call.getString("title")
         let okText = call.getString("okText")
+        let titleTextColor = call.getString("titleTextColor")
+        let titleBgColor = call.getString("titleBgColor")
         let cancelText = call.getString("cancelText")
         let okButtonColor = call.getString("okButtonColor")
         let cancelButtonColor = call.getString("cancelButtonColor")
         let is24Hours = call.getBool("is24Hours") ?? false
-        let dateFormatter = DateFormatter.init()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let titleDateFormatter =  DateFormatter.init()
-        titleDateFormatter.dateFormat = "E, MMM d, yyyy"
-        let titleDate = titleDateFormatter.string(from: dateFormatter.date(from: date!)!)
+        dateFormatter?.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        if(mode == "date"){
+            titleDateFormatter?.dateFormat = "E, MMM d, yyyy"
+        }else{
+            titleDateFormatter?.dateFormat = "HH:MM a"
+        }
+
+        let titleDate = titleDateFormatter?.string(from: (dateFormatter?.date(from: date!))!)
+
         DispatchQueue.main.async {
-            var object: [String:Any] = [:]
-            let picker = UIDatePicker()
-            let alert = PickerViewController() //UIAlertController.init(title: title != nil ? title : titleDate, message: nil, preferredStyle: .alert)
-            alert.modalPresentationStyle = .popover
-            alert.popoverPresentationController?.delegate = self
-            alert.rotateDelegate = self;
-            alert.view.backgroundColor = UIColor.white
-            let alertSize = CGSize(width: UIScreen.main.bounds.size.width / 2, height: UIScreen.main.bounds.size.height / 2)
-           // alert.view.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-            let alertView = UIView()
-            let titleView = UILabel(frame: CGRect(x: 0, y: 0, width: alertSize.width, height: 44))
-            titleView.text = title != nil ? title : titleDate
-            alertView.addSubview(titleView);
-            alertView.addSubview(picker)
-            /*
-             let cancelButton = UIAlertAction.init(title: cancelText != nil ? cancelText : "Cancel", style: .cancel, handler:{ action in
-             object["value"] = nil
-             call.resolve(object)
-             alert.dismiss(animated: true, completion: nil)
-             })
-
-             if(cancelButtonColor != nil){
-             let cancelColor  = ColorName[cancelButtonColor!]
-             cancelButton.setValue(UIColor(hexString: cancelColor != nil ? cancelColor! : cancelButtonColor!), forKey: "titleTextColor")
-             }
-
-             alert.addAction(cancelButton)
+            self.picker = UIDatePicker(frame: CGRect(x: 0, y: self.defaultTitleHeight, width: 0, height: 0))
 
 
-             let okButton = UIAlertAction.init(title: okText != nil ? okText : "Ok", style: .default, handler:{ action in
-             object["value"] = dateFormatter.string(from: picker.date)
-             call.resolve(object)
-             alert.dismiss(animated: true, completion: nil)
-             })
 
-             if(okButtonColor != nil){
-             let okColor = ColorName[okButtonColor!]
-             okButton.setValue(UIColor(hexString: okColor != nil ? okColor! : okButtonColor!), forKey: "titleTextColor")
-             }
+            self.picker?.addTarget(self, action: #selector(self.datePickerChanged(picker:)), for: .valueChanged)
+            self.alert = PickerViewController()
+            self.alert?.modalPresentationStyle = .popover
+            self.alert?.popoverPresentationController?.delegate = self
+            self.alert?.rotateDelegate = self;
+            self.alert?.view.backgroundColor = UIColor.white
+            let alertSize = CGSize(width: 300 , height: 250 + self.defaultButtonHeight)
+            let alertView = UIView(frame: CGRect(x: 0, y: 0, width: alertSize.width, height: alertSize.height))
 
-             alert.addAction(okButton)
-             */
+            self.titleView = UILabel(frame: CGRect(x: 0, y: 0, width: alertSize.width, height: self.defaultTitleHeight))
+            self.titleView?.textAlignment = .center
+            self.titleView?.text = self.title != nil ? self.title : titleDate
+            self.titleView?.textColor = UIColor.white
 
-            picker.setDate(dateFormatter.date(from: date!)!, animated: false)
+            if(titleTextColor != nil){
+                let titleColor = ColorName[titleTextColor!]
+                self.titleView?.textColor = titleColor != nil ? UIColor(hexString: titleColor!) : UIColor.white
+            }
+
+            self.titleView?.backgroundColor = self.defaultColor
+            
+            if(titleBgColor != nil){
+                let bgColor = ColorName[titleBgColor!]
+                self.titleView?.backgroundColor = bgColor != nil ? UIColor(hexString: bgColor!) : self.defaultColor
+            }
+
+            let yPosition = alertView.bounds.size.height - self.defaultButtonHeight - self.defaultSpacerHeight
+            let lineView = UIView(frame: CGRect(x: 0,
+                                                y: yPosition,
+                                                width: alertView.bounds.size.width,
+                                                height: self.defaultSpacerHeight))
+
+            lineView.backgroundColor = UIColor(red: 198/255, green: 198/255, blue: 198/255, alpha: 1)
+
+            alertView.addSubview(lineView)
+            alertView.addSubview(self.titleView!);
+            alertView.addSubview(self.picker!)
+
+            self.alert?.view.addSubview(alertView)
+
+
+            let buttonWidth =  alertSize.width / 2
+            let cancelButton = UIButton(frame: CGRect(x: 0, y: alertSize.height - self.defaultButtonHeight, width: buttonWidth, height: self.defaultButtonHeight))
+
+            alertView.addSubview(cancelButton)
+
+            cancelButton.setTitle(cancelText != nil ? cancelText! : "Cancel", for: .normal)
+            cancelButton.setTitleColor(self.defaultColor, for: .normal)
+            cancelButton.setTitleColor(self.defaultColor, for: .highlighted)
+            let cancelTap = UITapGestureRecognizer(target: self, action: #selector(self.cancel))
+            cancelButton.addGestureRecognizer(cancelTap)
+
+
+
+            let okButton = UIButton(type: .custom)
+            okButton.frame =  CGRect(x: buttonWidth, y: alertSize.height - self.defaultButtonHeight, width: buttonWidth, height: self.defaultButtonHeight)
+            alertView.addSubview(okButton)
+            okButton.setTitle(okText != nil ? okText! : "Ok", for: .normal)
+            okButton.setTitleColor(self.defaultColor, for: .normal)
+            okButton.setTitleColor(self.defaultColor, for: .highlighted)
+            let okTap = UITapGestureRecognizer(target: self, action: #selector(self.ok))
+            okButton.addGestureRecognizer(okTap)
+
+            if(cancelButtonColor != nil){
+                let cancelColor  = ColorName[cancelButtonColor!]
+                cancelButton.setTitleColor(UIColor(hexString: cancelColor != nil ? cancelColor! : cancelButtonColor!), for: .normal)
+                cancelButton.setTitleColor(UIColor(hexString: cancelColor != nil ? cancelColor! : cancelButtonColor!), for: .highlighted)
+            }
+
+            if(okButtonColor != nil){
+                let okColor = ColorName[okButtonColor!]
+                okButton.setTitleColor(UIColor(hexString: okColor != nil ? okColor! : okButtonColor!), for: .normal)
+                okButton.setTitleColor(UIColor(hexString: okColor != nil ? okColor! : okButtonColor!), for: .highlighted)
+            }
+
+
+            self.picker?.setDate((self.dateFormatter?.date(from: date!)!)!, animated: false)
 
             if(max != nil){
-                picker.maximumDate = dateFormatter.date(from: max!)!
+                self.picker?.maximumDate = self.dateFormatter?.date(from: max!)!
             }
             if(min != nil){
-                picker.minimumDate = dateFormatter.date(from: min!)!
+                self.picker?.minimumDate = self.dateFormatter?.date(from: min!)!
             }
 
             if(mode == "time"){
-                picker.datePickerMode = UIDatePickerMode.time
+                self.picker?.datePickerMode = UIDatePickerMode.time
+                if(is24Hours){
+                    self.picker?.locale = Locale(identifier: "en_GB")
+                }
             }else{
-                picker.datePickerMode = UIDatePickerMode.date
+                self.picker?.datePickerMode = UIDatePickerMode.date
             }
 
 
-            alert.popoverPresentationController?.sourceView = alertView
+            self.alert?.popoverPresentationController?.sourceView = self.bridge.viewController.view
+            self.alert?.preferredContentSize =  CGSize(width:alertSize.width, height: alertSize.height)
 
-            alert.preferredContentSize =  CGSize(width:alertSize.width, height: alertSize.height)
-
-            alert.bridge = self.bridge
-            alert.setCenteredPopover()
-            self.bridge.viewController.present(alert, animated: true,completion:nil)
+            self.alert?.bridge = self.bridge
+            self.alert?.setCenteredPopover()
+            self.lastCall = call
+            self.bridge.viewController.present(self.alert!, animated: true,completion:nil)
         }
     }
 }
@@ -139,7 +227,6 @@ extension UIColor {
         if hexString.hasPrefix("#") {
             let start = hexString.index(hexString.startIndex, offsetBy: 1)
             let hexColor = String(hexString[start...])
-
             if hexColor.count == 8 {
                 let scanner = Scanner(string: hexColor)
                 var hexNumber: UInt64 = 0
@@ -151,6 +238,18 @@ extension UIColor {
                     a = CGFloat(hexNumber & 0x000000ff) / 255
 
                     self.init(red: r, green: g, blue: b, alpha: a)
+                    return
+                }
+            } else if hexColor.count == 6 {
+                let scanner = Scanner(string: hexColor)
+                var hexNumber: UInt64 = 0
+
+                if scanner.scanHexInt64(&hexNumber) {
+                    r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
+                    g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+                    b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+
+                    self.init(red: r, green: g, blue: b, alpha: 1.0)
                     return
                 }
             }

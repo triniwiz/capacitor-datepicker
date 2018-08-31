@@ -28,9 +28,11 @@ const response = await picker.show({
     cancelText: 'NAH',
     okButtonColor: 'green',
     cancelButtonColor: 'red',
+    titleTextColor: 'black' // IOS only
+    titleBgColor: 'green' // IOS only
     is24Hours: false // available for time mode
 })
-const date = response.value ;
+const date = response.value;
 ```
 
 ## Api

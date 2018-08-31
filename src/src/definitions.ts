@@ -6,13 +6,15 @@ declare global {
 
 export interface DatePickerOptions {
   mode: 'date' | 'time';
-  is24Hours?: false;
   date: string;
+  is24Hours?: false;
   theme?: string;
-  cancelText?:string;
-  okText?:string;
-  cancelButtonColor?:string;
-  okButtonColor?:string;
+  cancelText?: string;
+  okText?: string;
+  cancelButtonColor?: string;
+  okButtonColor?: string;
+  titleTextColor?: string;
+  titleBgColor?: string;
 }
 
 export interface IDatePicker {

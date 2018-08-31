@@ -43,24 +43,6 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/generated/res/rs/androidTest/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/generated/res/resValues/androidTest/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/generated/source/apt/test/debug" isTestSource="true" generated="true" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/attr" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/check-manifest" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/classes" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/incremental" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/intermediate-jars" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/javaPrecompile" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/jniLibs" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/lint" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/packaged-aidl" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/packagedAssets" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/packaged_res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/public_res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/rs" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/shaders" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/../../../demo/node_modules/capacitor-datepicker/android/capacitor-datepicker/build/tmp" />
     </content>
