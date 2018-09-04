@@ -1,6 +1,6 @@
 {
   "name": "capacitor-datepicker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Datepicker for capacitor",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
