@@ -1,7 +1,7 @@
 
   Pod::Spec.new do |s|
-    s.name = 'CapacitorDatepicker'
-    s.version = '0.0.2'
+    s.name = 'ProjektionistenCapacitorDatepicker'
+    s.version = '0.0.4'
     s.summary = 'Datepicker for capacitor'
     s.license = 'MIT'
     s.homepage = 'https://github.com/triniwiz/capacitor-datepicker'
