@@ -60,7 +60,10 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
         self.alert?.dismiss(animated: true, completion: nil)
         if(lastCall != nil){
             var obj:[String:Any] = [:]
-            obj["value"] = dateFormatter?.string(from: (picker?.date)!)
+            var formattedDate = dateFormatter!.string(from: picker!.date)
+            // we need to insert the colon in the timezone modifier because mobile safari can not parse it otherwise
+            formattedDate.insert(":", at: (formattedDate.index(formattedDate.endIndex, offsetBy: -2)))
+            obj["value"] = formattedDate
             lastCall?.resolve(obj)
             lastCall = nil
         }
@@ -98,18 +101,17 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
         let cancelButtonColor = call.getString("cancelButtonColor")
         let is24Hours = call.getBool("is24Hours") ?? false
         dateFormatter?.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        if(mode == "date"){
+        if (mode == "date") {
             titleDateFormatter?.dateFormat = "E, MMM d, yyyy"
-        }else{
-            titleDateFormatter?.dateFormat = "HH:MM a"
+        } else{
+            titleDateFormatter?.dateFormat = is24Hours ? "HH:mm" : "HH:mm a"
         }
 
         let titleDate = titleDateFormatter?.string(from: (dateFormatter?.date(from: date!))!)
 
         DispatchQueue.main.async {
             self.picker = UIDatePicker(frame: CGRect(x: 0, y: self.defaultTitleHeight, width: 0, height: 0))
-
-
+            self.picker!.setValue(UIColor.black, forKey: "textColor")
 
             self.picker?.addTarget(self, action: #selector(self.datePickerChanged(picker:)), for: .valueChanged)
             self.alert = PickerViewController()
@@ -126,15 +128,15 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
             self.titleView?.textColor = UIColor.white
 
             if(titleTextColor != nil){
-                let titleColor = ColorName[titleTextColor!]
-                self.titleView?.textColor = titleColor != nil ? UIColor(hexString: titleColor!) : UIColor.white
+                let titleColor = UIColor(hexString: titleTextColor!)
+                self.titleView?.textColor = titleColor != nil ? titleColor : UIColor.white
             }
 
             self.titleView?.backgroundColor = self.defaultColor
-            
+
             if(titleBgColor != nil){
-                let bgColor = ColorName[titleBgColor!]
-                self.titleView?.backgroundColor = bgColor != nil ? UIColor(hexString: bgColor!) : self.defaultColor
+                let bgColor = UIColor(hexString: titleBgColor!)
+                self.titleView?.backgroundColor = bgColor != nil ? bgColor : self.defaultColor
             }
 
             let yPosition = alertView.bounds.size.height - self.defaultButtonHeight - self.defaultSpacerHeight
@@ -175,15 +177,15 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
             okButton.addGestureRecognizer(okTap)
 
             if(cancelButtonColor != nil){
-                let cancelColor  = ColorName[cancelButtonColor!]
-                cancelButton.setTitleColor(UIColor(hexString: cancelColor != nil ? cancelColor! : cancelButtonColor!), for: .normal)
-                cancelButton.setTitleColor(UIColor(hexString: cancelColor != nil ? cancelColor! : cancelButtonColor!), for: .highlighted)
+                let cancelColor  = UIColor(hexString: cancelButtonColor!)
+                cancelButton.setTitleColor(cancelColor != nil ? cancelColor! : self.defaultColor!, for: .normal)
+                cancelButton.setTitleColor(cancelColor != nil ? cancelColor! : self.defaultColor!, for: .highlighted)
             }
 
             if(okButtonColor != nil){
-                let okColor = ColorName[okButtonColor!]
-                okButton.setTitleColor(UIColor(hexString: okColor != nil ? okColor! : okButtonColor!), for: .normal)
-                okButton.setTitleColor(UIColor(hexString: okColor != nil ? okColor! : okButtonColor!), for: .highlighted)
+                let okColor = UIColor(hexString: okButtonColor!)
+                okButton.setTitleColor(okColor != nil ? okColor! : self.defaultColor!, for: .normal)
+                okButton.setTitleColor(okColor != nil ? okColor! : self.defaultColor!, for: .highlighted)
             }
 
 
@@ -197,12 +199,12 @@ public class DatePickerPlugin: CAPPlugin , UIPopoverPresentationControllerDelega
             }
 
             if(mode == "time"){
-                self.picker?.datePickerMode = UIDatePickerMode.time
+                self.picker?.datePickerMode = UIDatePicker.Mode.time
                 if(is24Hours){
                     self.picker?.locale = Locale(identifier: "en_GB")
                 }
             }else{
-                self.picker?.datePickerMode = UIDatePickerMode.date
+                self.picker?.datePickerMode = UIDatePicker.Mode.date
             }
 
 
@@ -244,14 +246,14 @@ extension UIColor {
                 let scanner = Scanner(string: hexColor)
                 var hexNumber: UInt64 = 0
 
-                if scanner.scanHexInt64(&hexNumber) {
-                    r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
-                    g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
-                    b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+                 if scanner.scanHexInt64(&hexNumber) {
+                   r = CGFloat((hexNumber & 0xff0000) >> 16) / 255
+                   g = CGFloat((hexNumber & 0x00ff00) >> 8) / 255
+                   b = CGFloat((hexNumber & 0x0000ff)) / 255
 
-                    self.init(red: r, green: g, blue: b, alpha: 1.0)
-                    return
-                }
+                   self.init(red: r, green: g, blue: b, alpha: 1.0)
+                   return
+               }
             }
         }
 

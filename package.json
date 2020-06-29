@@ -1,6 +1,6 @@
 {
   "name": "@projektionisten/capacitor-datepicker",
-  "version": "0.0.4",
+  "version": "0.0.12",
   "description": "Datepicker for capacitor",
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

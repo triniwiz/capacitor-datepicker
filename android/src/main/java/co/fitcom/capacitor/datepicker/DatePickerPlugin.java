@@ -8,7 +8,7 @@ import android.app.TimePickerDialog;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -79,7 +79,7 @@ public class DatePickerPlugin extends Plugin {
                         res.put("value", toISO8601UTC(calendar1.getTime()));
                         call.resolve(res);
                     }
-                }, calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE), is24Hours);
+                }, calendar.get(is24Hours ? Calendar.HOUR_OF_DAY : Calendar.HOUR), calendar.get(Calendar.MINUTE), is24Hours);
 
                 if (title != null) {
                     timePickerDialog.setTitle(title);
@@ -99,14 +99,6 @@ public class DatePickerPlugin extends Plugin {
 
                 Button cancelButton = timePickerDialog.getButton(Dialog.BUTTON_NEGATIVE);
 
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        res.put("value", null);
-                        call.resolve(res);
-                    }
-                });
-
                 if (cancelText != null) {
                     cancelButton.setText(cancelText);
                 }
@@ -115,6 +107,16 @@ public class DatePickerPlugin extends Plugin {
                 if (cancelButtonColor != null) {
                     cancelButton.setTextColor(Color.parseColor(cancelButtonColor));
                 }
+
+                timePickerDialog.setCancelable(true);
+                timePickerDialog.setCanceledOnTouchOutside(true);
+                timePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        res.put("value", null);
+                        call.resolve(res);
+                    }
+                });
 
                 timePickerDialog.show();
 
@@ -161,14 +163,6 @@ public class DatePickerPlugin extends Plugin {
 
                 Button cancelButton = datePickerDialog.getButton(Dialog.BUTTON_NEGATIVE);
 
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        res.put("value", null);
-                        call.resolve(res);
-                    }
-                });
-
                 if (cancelText != null) {
                     cancelButton.setText(cancelText);
                 }
@@ -176,6 +170,16 @@ public class DatePickerPlugin extends Plugin {
                 if (cancelButtonColor != null) {
                     cancelButton.setTextColor(Color.parseColor(cancelButtonColor));
                 }
+
+                datePickerDialog.setCancelable(true);
+                datePickerDialog.setCanceledOnTouchOutside(true);
+                datePickerDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        res.put("value", null);
+                        call.resolve(res);
+                    }
+                });
 
                 datePickerDialog.show();
             }
